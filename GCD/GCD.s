@@ -1,95 +1,84 @@
     .data
-    @ Define all the strings and variables
     .balign 4
 get_num_1: .asciz "Number 1 :\n"
 
     .balign 4
 get_num_2: .asciz "Number 2 :\n"
 
-    @ printf and scanf use %d in decimal numbers
     .balign 4
 pattern: .asciz "%d"
 
-    @ Declare and initialize variables: num_1 and num_2
     .balign 4
 num_1: .word 0
 
     .balign 4
 num_2: .word 0
 
-    @ Output message pattern
     .balign 4
 output: .asciz "GCD of %d and %d is %d\n"
 
-    @ Variable to backup link register
     .balign 4
-    lr_bu: .word 0
+lr_bu: .word 0
 
     .balign 4
-    lr_bu_2: .word 0
+lr_bu_2: .word 0
 
     .text
+
 gcd_func:
-    @ Save (Store) Link Register to lr_bu_2
     LDR R2, addr_lr_bu_2
     STR lr, [R2]
-
-    @ Find GCD
-    MOV     R2, R0
-    DIV     R0, R0, R1
-    MUL     R4, R3, R1
-    SUB     R1, R2, R1
-
+    MOV     R3, R0
+    MOV     R4, #0
+    B while
+while:
+    CMP     R0, R1
+    BLT     else
+    SUB     R0, R0, R1
+    ADD     R4, R4, R1
+    B while
+else:
+    MOV     R0, R4
+    SUB     R1, R2, R0
 
     CMP R1, #0
-    BNE gcd_func
+    BGT gcd_func
 
-    @ Load Link Register back up 2
-    LDR lr, add_lr_bu_2
+    LDR lr, addr_lr_bu_2
     LDR lr, [lr]
 
     BX lr
 
-    @ address of Link Register back up 2
 addr_lr_bu_2: .word lr_bu_2
 
-    @ main function
+
     .global main
 main:
-
-    @ Store (back up) Link Register
     LDR R1, addr_lr_bu
-    STR lr, [R1]            @ Mem[addr_lr_bu] <- LR
+    STR lr, [R1]
 
-    @ Print Number 1 :
     LDR R0, addr_get_num_1
     BL printf
 
-    @ Get num_1 from user via keyboard
     LDR R0, addr_pattern
     LDR R1, addr_num_1
     BL scanf
 
-    @ Print Number 2 :
     LDR R0, addr_get_num_2
     BL printf
 
-    @ Get num_2 from user via keyboard
     LDR R0, addr_pattern
     LDR R1, addr_num_2
     BL scanf
 
-    @ Pass values of num_1 and num_2 to add
     LDR R0, addr_num_1
-    LDR R0, [R0]            @ R0 <- Mem[addr_num_1]
+    LDR R0, [R0]
     LDR R1, addr_num_2
-    LDR R1, [R1]            @ R1 <- Mem[addr_num_2]
+    LDR R1, [R1]
     BL gcd_func
 
-    @ Copy returned value from gcd_func to R3
-    MOV R3, R0    @ to printf
+    MOV R3, R0
 
-    @ Print the output message, num_1, num_2 and result
     LDR R0, addr_output
     LDR R1, addr_num_1
     LDR R1, [R1]
@@ -97,9 +86,9 @@ main:
     LDR R2, [R2]
     BL printf
 
-    @ Restore Link Register to return
     LDR lr, addr_lr_bu
-    LDR lr, [lr]    @ LR <- Mem[addr_lr_bu]
+    LDR lr, [lr]
+
     BX lr
 
     @ Define pointer variables

@@ -36,7 +36,7 @@ gcd_func:
 
     @ Find GCD
     MOV     R2, R0
-    DIV    R0, R0, R1
+    DIV     R0, R0, R1
     MUL     R4, R3, R1
     SUB     R1, R2, R1
 

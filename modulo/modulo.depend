@@ -1,0 +1,5 @@
+# depslib dependency file v1.0
+1613639693 source:/home/pi/asm/modulo/main.c
+	<stdio.h>
+	<stdlib.h>
+
